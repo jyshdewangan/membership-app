@@ -1,0 +1,199 @@
+{
+	"info": {
+		"_postman_id": "7ae82245-8a21-4f1e-a4be-419b4cfb06df",
+		"name": "FirstClub Membership API",
+		"description": "Postman Collection for testing the Spring Boot FirstClub tiered membership subscription system.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Plans",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/membership/plans",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"membership",
+						"plans"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Subscribe User",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"userId\": 100,\n  \"planId\": 1,\n  \"tierId\": 1,\n  \"autoRenew\": true\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/membership/subscribe",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"membership",
+						"subscribe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Subscription Status",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/membership/status/100",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"membership",
+						"status",
+						"100"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upgrade Subscription Tier",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"userId\": 100,\n  \"newTierId\": 2\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/membership/upgrade",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"membership",
+						"upgrade"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Downgrade Subscription Tier",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"userId\": 100,\n  \"newTierId\": 1\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/membership/downgrade",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"membership",
+						"downgrade"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Evaluate Tier Eligibility (Auto-upgrade)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/membership/evaluate-tier/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"membership",
+						"evaluate-tier",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cancel Subscription",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"userId\": 100\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/membership/cancel",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"membership",
+						"cancel"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

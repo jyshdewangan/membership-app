@@ -32,3 +32,6 @@ H2 console available at [http://localhost:8080/h2-console](http://localhost:8080
 | 5 | PUT /api/membership/downgrade | Downgrade to a lower-ranked tier | `curl -s -X PUT http://localhost:8080/api/membership/downgrade -H "Content-Type: application/json" -d '{"userId":1,"newTierId":1}' \| json_pp` |
 | 6 | POST /api/membership/evaluate-tier/{userId} | Auto-upgrade tier based on order history | `curl -s -X POST http://localhost:8080/api/membership/evaluate-tier/3 \| json_pp` |
 | 7 | DELETE /api/membership/cancel | Cancel active subscription (status → CANCELLED) | `curl -i -X DELETE http://localhost:8080/api/membership/cancel -H "Content-Type: application/json" -d '{"userId":1}'` |
+
+## Postman Collection
+A pre-configured Postman Collection is available at membership-app.postman_collection.json (Attached With the Project). You can import this file directly into Postman to test all endpoints.
