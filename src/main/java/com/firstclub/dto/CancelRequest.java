@@ -1,7 +1,10 @@
 package com.firstclub.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 public class CancelRequest {
 
+    @NotNull(message = "User ID is required")
     private Long userId;
 
     public CancelRequest() {

@@ -1,8 +1,13 @@
 package com.firstclub.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 public class TierChangeRequest {
 
+    @NotNull(message = "User ID is required")
     private Long userId;
+
+    @NotNull(message = "New Tier ID is required")
     private Long newTierId;
 
     public TierChangeRequest() {

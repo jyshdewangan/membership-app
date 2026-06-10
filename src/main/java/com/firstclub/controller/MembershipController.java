@@ -7,6 +7,7 @@ import com.firstclub.dto.SubscriptionStatusDTO;
 import com.firstclub.dto.TierChangeRequest;
 import com.firstclub.entity.MembershipSubscription;
 import com.firstclub.service.MembershipService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,25 +38,25 @@ public class MembershipController {
     }
 
     @PostMapping("/subscribe")
-    public ResponseEntity<MembershipSubscription> subscribe(@RequestBody SubscribeRequest request) {
+    public ResponseEntity<MembershipSubscription> subscribe(@Valid @RequestBody SubscribeRequest request) {
         MembershipSubscription subscription = membershipService.subscribe(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(subscription);
     }
 
     @PutMapping("/upgrade")
-    public ResponseEntity<MembershipSubscription> upgrade(@RequestBody TierChangeRequest request) {
+    public ResponseEntity<MembershipSubscription> upgrade(@Valid @RequestBody TierChangeRequest request) {
         MembershipSubscription subscription = membershipService.upgrade(request);
         return ResponseEntity.ok(subscription);
     }
 
     @PutMapping("/downgrade")
-    public ResponseEntity<MembershipSubscription> downgrade(@RequestBody TierChangeRequest request) {
+    public ResponseEntity<MembershipSubscription> downgrade(@Valid @RequestBody TierChangeRequest request) {
         MembershipSubscription subscription = membershipService.downgrade(request);
         return ResponseEntity.ok(subscription);
     }
 
     @DeleteMapping("/cancel")
-    public ResponseEntity<Void> cancel(@RequestBody CancelRequest request) {
+    public ResponseEntity<Void> cancel(@Valid @RequestBody CancelRequest request) {
         membershipService.cancel(request.getUserId());
         return ResponseEntity.noContent().build();
     }

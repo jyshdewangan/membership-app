@@ -1,10 +1,18 @@
 package com.firstclub.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 public class SubscribeRequest {
 
+    @NotNull(message = "User ID is required")
     private Long userId;
+
+    @NotNull(message = "Plan ID is required")
     private Long planId;
+
+    @NotNull(message = "Tier ID is required")
     private Long tierId;
+
     private Boolean autoRenew;
 
     public SubscribeRequest() {
