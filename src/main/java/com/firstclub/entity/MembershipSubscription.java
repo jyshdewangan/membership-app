@@ -41,11 +41,18 @@ public class MembershipSubscription {
     @Version
     private Long version;
 
+    private boolean autoRenew = true;
+
     public MembershipSubscription() {
     }
 
     public MembershipSubscription(Long id, Long userId, MembershipPlan plan, MembershipTier tier,
                                   SubscriptionStatus status, LocalDate startDate, LocalDate expiryDate, Long version) {
+        this(id, userId, plan, tier, status, startDate, expiryDate, version, true);
+    }
+
+    public MembershipSubscription(Long id, Long userId, MembershipPlan plan, MembershipTier tier,
+                                  SubscriptionStatus status, LocalDate startDate, LocalDate expiryDate, Long version, boolean autoRenew) {
         this.id = id;
         this.userId = userId;
         this.plan = plan;
@@ -54,6 +61,7 @@ public class MembershipSubscription {
         this.startDate = startDate;
         this.expiryDate = expiryDate;
         this.version = version;
+        this.autoRenew = autoRenew;
     }
 
     public Long getId() {
@@ -118,5 +126,13 @@ public class MembershipSubscription {
 
     public void setVersion(Long version) {
         this.version = version;
+    }
+
+    public boolean isAutoRenew() {
+        return autoRenew;
+    }
+
+    public void setAutoRenew(boolean autoRenew) {
+        this.autoRenew = autoRenew;
     }
 }

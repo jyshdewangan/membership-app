@@ -19,6 +19,7 @@ public class SubscriptionStatusDTO {
     private LocalDate startDate;
     private LocalDate expiryDate;
     private List<BenefitConfigDTO> activeBenefits;
+    private boolean autoRenew;
 
     public SubscriptionStatusDTO() {
     }
@@ -26,6 +27,13 @@ public class SubscriptionStatusDTO {
     public SubscriptionStatusDTO(Long subscriptionId, Long userId, String planName, BigDecimal planPrice,
                                   int durationDays, String tierName, int tierRank, String status,
                                   LocalDate startDate, LocalDate expiryDate, List<BenefitConfigDTO> activeBenefits) {
+        this(subscriptionId, userId, planName, planPrice, durationDays, tierName, tierRank, status, startDate, expiryDate, activeBenefits, true);
+    }
+
+    public SubscriptionStatusDTO(Long subscriptionId, Long userId, String planName, BigDecimal planPrice,
+                                  int durationDays, String tierName, int tierRank, String status,
+                                  LocalDate startDate, LocalDate expiryDate, List<BenefitConfigDTO> activeBenefits,
+                                  boolean autoRenew) {
         this.subscriptionId = subscriptionId;
         this.userId = userId;
         this.planName = planName;
@@ -37,6 +45,7 @@ public class SubscriptionStatusDTO {
         this.startDate = startDate;
         this.expiryDate = expiryDate;
         this.activeBenefits = activeBenefits;
+        this.autoRenew = autoRenew;
     }
 
     public Long getSubscriptionId() {
@@ -125,5 +134,13 @@ public class SubscriptionStatusDTO {
 
     public void setActiveBenefits(List<BenefitConfigDTO> activeBenefits) {
         this.activeBenefits = activeBenefits;
+    }
+
+    public boolean isAutoRenew() {
+        return autoRenew;
+    }
+
+    public void setAutoRenew(boolean autoRenew) {
+        this.autoRenew = autoRenew;
     }
 }

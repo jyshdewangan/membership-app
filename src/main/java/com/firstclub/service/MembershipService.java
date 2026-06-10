@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
+@Transactional(noRollbackFor = NotFoundException.class)
 public class MembershipService {
 
     private final MembershipPlanRepository planRepo;
@@ -81,9 +81,26 @@ public class MembershipService {
         return result;
     }
 
+    private Optional<MembershipSubscription> getActiveSubscriptionOrExpire(Long userId) {
+        Optional<MembershipSubscription> subscriptionOpt = subscriptionRepo.findByUserIdAndStatus(
+                userId, SubscriptionStatus.ACTIVE);
+        if (subscriptionOpt.isPresent()) {
+            MembershipSubscription sub = subscriptionOpt.get();
+            if (LocalDate.now().isAfter(sub.getExpiryDate())) {
+                if (sub.isAutoRenew()) {
+                    sub.setStatus(SubscriptionStatus.EXPIRED);
+                } else {
+                    sub.setStatus(SubscriptionStatus.CANCELLED);
+                }
+                subscriptionRepo.save(sub);
+                return Optional.empty();
+            }
+        }
+        return subscriptionOpt;
+    }
+
     public MembershipSubscription subscribe(SubscribeRequest request) {
-        Optional<MembershipSubscription> existing = subscriptionRepo.findByUserIdAndStatus(
-                request.getUserId(), SubscriptionStatus.ACTIVE);
+        Optional<MembershipSubscription> existing = getActiveSubscriptionOrExpire(request.getUserId());
         if (existing.isPresent()) {
             throw new IllegalStateException("User already has an active subscription");
         }
@@ -101,13 +118,13 @@ public class MembershipService {
         subscription.setStatus(SubscriptionStatus.ACTIVE);
         subscription.setStartDate(LocalDate.now());
         subscription.setExpiryDate(LocalDate.now().plusDays(plan.getDurationDays()));
+        subscription.setAutoRenew(request.getAutoRenew() != null ? request.getAutoRenew() : true);
 
         return subscriptionRepo.save(subscription);
     }
 
     public MembershipSubscription upgrade(TierChangeRequest request) {
-        MembershipSubscription subscription = subscriptionRepo.findByUserIdAndStatus(
-                        request.getUserId(), SubscriptionStatus.ACTIVE)
+        MembershipSubscription subscription = getActiveSubscriptionOrExpire(request.getUserId())
                 .orElseThrow(() -> new NotFoundException("No active subscription found for user " + request.getUserId()));
 
         MembershipTier newTier = tierRepo.findById(request.getNewTierId())
@@ -123,8 +140,7 @@ public class MembershipService {
     }
 
     public MembershipSubscription downgrade(TierChangeRequest request) {
-        MembershipSubscription subscription = subscriptionRepo.findByUserIdAndStatus(
-                        request.getUserId(), SubscriptionStatus.ACTIVE)
+        MembershipSubscription subscription = getActiveSubscriptionOrExpire(request.getUserId())
                 .orElseThrow(() -> new NotFoundException("No active subscription found for user " + request.getUserId()));
 
         MembershipTier newTier = tierRepo.findById(request.getNewTierId())
@@ -140,17 +156,19 @@ public class MembershipService {
     }
 
     public void cancel(Long userId) {
-        MembershipSubscription subscription = subscriptionRepo.findByUserIdAndStatus(
-                        userId, SubscriptionStatus.ACTIVE)
+        MembershipSubscription subscription = getActiveSubscriptionOrExpire(userId)
                 .orElseThrow(() -> new NotFoundException("No active subscription found for user " + userId));
 
-        subscription.setStatus(SubscriptionStatus.CANCELLED);
+        if (!subscription.isAutoRenew()) {
+            throw new IllegalStateException("Subscription is already cancelled");
+        }
+
+        subscription.setAutoRenew(false);
         subscriptionRepo.save(subscription);
     }
 
     public SubscriptionStatusDTO getStatus(Long userId) {
-        MembershipSubscription sub = subscriptionRepo.findByUserIdAndStatus(
-                        userId, SubscriptionStatus.ACTIVE)
+        MembershipSubscription sub = getActiveSubscriptionOrExpire(userId)
                 .orElseThrow(() -> new NotFoundException("No active subscription found for user " + userId));
 
         List<TierBenefit> activeTierBenefits = tierBenefitRepo.findByTierIdAndActiveTrue(sub.getTier().getId());
@@ -168,13 +186,13 @@ public class MembershipService {
         statusDTO.setStartDate(sub.getStartDate());
         statusDTO.setExpiryDate(sub.getExpiryDate());
         statusDTO.setActiveBenefits(activeBenefits);
+        statusDTO.setAutoRenew(sub.isAutoRenew());
 
         return statusDTO;
     }
 
     public SubscriptionStatusDTO evaluateTier(Long userId) {
-        MembershipSubscription subscription = subscriptionRepo.findByUserIdAndStatus(
-                        userId, SubscriptionStatus.ACTIVE)
+        MembershipSubscription subscription = getActiveSubscriptionOrExpire(userId)
                 .orElseThrow(() -> new NotFoundException("No active subscription found for user " + userId));
 
         MembershipTier evaluatedTier = tierEvaluatorRegistry.evaluateHighestEligibleTier(userId);
